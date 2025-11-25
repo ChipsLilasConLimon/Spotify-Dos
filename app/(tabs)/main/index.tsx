@@ -66,7 +66,6 @@ export default function MainScreen() {
     setMusica(nuevoArrayMusica);
     setArtistas(nuevoArrayArtistas);
     } catch (err: any) {
-      console.error("Error al cargar los datos:", err.message || err);
       Alert.alert("Error", "No se pudieron los datos");
       setError("Error al cargar grupos.");
     } finally {

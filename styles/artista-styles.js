@@ -87,5 +87,10 @@ listaContainer: {
   paddingHorizontal: 20,
   paddingBottom: 20,
 },
-
+fadeBottom: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    height: 60,
+  }
 });

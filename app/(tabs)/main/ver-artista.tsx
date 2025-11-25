@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Pressable, Text, View } from 'react-native';
@@ -81,7 +82,12 @@ type ArtistaCanciones = {
     <>
     <View style={artistaStyles.bannerContainerPlaylist}>
     <Image source={{ uri: artista?.picture_xl }} style={artistaStyles.bannerImageMainPlaylist}
-    resizeMode="cover"/>
+    resizeMode="cover"
+    />
+    <LinearGradient
+        colors={['transparent', 'black']}
+        style={artistaStyles.fadeBottom}
+      />
   <View style={artistaStyles.bannerTextContainer}>
     <Text style={artistaStyles.bannerTextPlaylist}>{artista?.name}</Text>
   </View>
