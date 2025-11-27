@@ -1,48 +1,52 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+import axios from "axios";
+import { useAuthStore } from "../store/authStore";
 
-
-const API_BASE_URL = ' https://uncaptivated-nonflexibly-denzel.ngrok-free.dev/api';
-const TOKEN_KEY = 'userToken';
-
-//176561462626-29skkfl5dkhjjqf3cbhcove1uq92e52v.apps.googleusercontent.com
-export const saveAuthToken = async (token) => {
-  await AsyncStorage.setItem(TOKEN_KEY, token);
-};
-
-export const getAuthToken = async () => {
-  return await AsyncStorage.getItem(TOKEN_KEY);
-};
-
-export const removeAuthToken = async () => {
-  await AsyncStorage.removeItem(TOKEN_KEY);
-};
+const BASE_URL = "https://uncaptivated-nonflexibly-denzel.ngrok-free.dev/api";
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
-  timeout: 10000,
+  baseURL: BASE_URL,
 });
 
-api.interceptors.request.use(async (config) => {
-  const token = await getAuthToken();
+// Interceptor para agregar token a cada request
+api.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().token;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
+// Interceptor para refrescar token expirado
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response) {
-      const msg = error.response.data?.mensaje || `Error ${error.response.status}`;
-      return Promise.reject(new Error(msg));
-    } else if (error.request) {
-      return Promise.reject(new Error('No se pudo conectar con el servidor.'));
-    } else {
-      return Promise.reject(new Error(error.message));
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const { token, username, password } = useAuthStore.getState();
+
+        // Petición para refrescar el token
+        const refreshResponse = await axios.get(
+          `${BASE_URL}/auth/refresh?token=${token}`
+        );
+
+        const newToken = refreshResponse.data.token;
+
+        // Guardar el nuevo token en Zustand
+        useAuthStore.getState().loginStorage(newToken, username, password);
+
+        // Reintentar petición original
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        useAuthStore.getState().logoutStorge();
+        return Promise.reject(refreshError);
+      }
     }
+    return Promise.reject(error);
   }
 );
 

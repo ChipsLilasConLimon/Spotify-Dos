@@ -43,7 +43,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-  name="cuenta/perfil"
+  name="cuenta"
   options={{
     tabBarLabel: 'Perfil',
     title: 'Perfil',
