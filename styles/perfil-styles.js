@@ -65,6 +65,11 @@ export const perfilStyles = StyleSheet.create({
     height: 22,
     tintColor: "#f22929ff",
   },
+  iconoDerechaConfig: {
+    width: 22,
+    height: 22,
+    tintColor: "#ddddddff",
+  },
 
   // === TÍTULOS DE SECCIONES ===
   tituloSeccion: {
@@ -84,7 +89,7 @@ export const perfilStyles = StyleSheet.create({
 
   flatListContainer: {
    paddingHorizontal: 12,
-  paddingBottom: 80,
+  paddingBottom: 40,
   paddingTop: 10,
   },
 

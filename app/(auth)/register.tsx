@@ -43,7 +43,7 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", padding: 20 }}>
+    <View style={{ flex: 1, justifyContent: "center", padding: 15 }}>
       <Text style={{ fontSize: 24, marginBottom: 20, textAlign: "center" }}>
         Crear Cuenta
       </Text>

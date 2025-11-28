@@ -24,11 +24,18 @@ export const getCrearAlbum = async (dto) => {
   try{
     const state = useAlbumesUsuarioStore.getState();
     const response = await api.post(`playlist/crear`, dto);
+    const data = response.data.datos;
+    const nuevoAlbum = {
+    id: data.id,
+    nombre: data.nombre,
+    descripcion: data.descripcion,
+    imagen: data.imagen
+  };
     state.sePlaylistUser([
-      ...(state.array || []),
-      response.data.datos
-    ]);
-    return response.data.datos;
+    ...(state.array || []),
+    nuevoAlbum
+  ]);
+    return nuevoAlbum;
   }catch(error){
     console.log("Error al crear el álbum:", error.response?.data || error.message);
   }

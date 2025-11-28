@@ -63,9 +63,6 @@ export default function LoginScreen() {
       setError("Por favor, ingresa usuario y contraseña.");
       return;
     }
-    const handleSignUp = async () => {
-      router.push('/(auth)/register');
-    }
 
     setIsLoading(true);
     setError("");
@@ -86,6 +83,9 @@ export default function LoginScreen() {
       setIsLoading(false);
     }
   };
+  const handleSignUp = async () => {
+      router.push('/(auth)/register');
+    }
 
   return (
     <View style={globalStyles.containerLogin}>
@@ -139,7 +139,7 @@ export default function LoginScreen() {
         </Pressable>
          <Pressable
           style={globalStyles.buttonRegisterLogin}
-          onPress={handleLogin}
+          onPress={handleSignUp}
           disabled={isLoading}
         >
           <Text style={globalStyles.buttonTextLogin}>Registrarte</Text>

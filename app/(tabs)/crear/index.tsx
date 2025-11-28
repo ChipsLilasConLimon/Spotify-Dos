@@ -1,42 +1,17 @@
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import logoEliminar from "../../../assets/images/equis.png";
 import { getCrearAlbum, postPostearImagenAlbum } from '../../../services/playlistService';
 import { crearStyles } from "../../../styles/crearStyles";
 
-
-type DataUsuarios = {
-  id: number;
-  id_Usuario: number;
-  url_Perfil: string | null;
-  descripcion: string | null;
-  fecha_Creacion: string;
-};
-type Usuario = {
-  id: number;
-  username: string;
-  email: string;
-  apellido_Usuario: string | null;
-  nombre_Usuario: string | null;
-  password_Usuario: string | null;
-  rol: string;
-};
 export default function PerfilUsuarioScreen() {
-  const [datosusuario, setDatosUsuario] = useState<DataUsuarios>();
-  const [datosusuarioregistro, setDatosUsuarioRegistro] = useState<Usuario>();
-
   const [nombreplaylist, setNombrePlaylist] = useState('');
   const [descripcionplaylist, setDescripcionPlaylist] = useState('');
   const [imagen, setImagen] = useState('');
 
   const router = useRouter();
-
-   useEffect(() => {
-          
-         }, []);
-
   // ABRIR GALERÍA
     const pickImage = async () => {
       const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -69,7 +44,6 @@ export default function PerfilUsuarioScreen() {
       }
     }
     const resulatdos = await getCrearAlbum({
-      Id: 1,
       Nombre: nombreplaylist,
       Descripcion: descripcionplaylist,
       Imagen: urlImagen,

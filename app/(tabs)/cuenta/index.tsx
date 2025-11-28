@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, Image, Pressable, Text, View } from "react-native";
+import { Alert, FlatList, Image, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import logoLike from "../../../assets/images/me-gusta-logo.png";
+import logoTuerca from "../../../assets/images/tuerca.png";
 import logoSinUsuario from "../../../assets/images/usuario-sin-foto.png";
 import CerrarSesionButton from '../../../components/CerrarSesionPressable';
 import { getObtenerTodasPlaylistUsuario } from '../../../services/playlistService';
@@ -31,6 +32,7 @@ type Albumes = {
   imagen: string;
 }
 export default function PerfilUsuarioScreen() {
+  const [refresh, setRefresh] = useState(false);
   const [datosusuario, setDatosUsuario] = useState<DataUsuarios>();
   const [datosusuarioregistro, setDatosUsuarioRegistro] = useState<Usuario>();
   const [albumes, setAlbumes] = useState<Albumes[]>([]);
@@ -39,6 +41,12 @@ export default function PerfilUsuarioScreen() {
    useEffect(() => {
           obtenerDatos();
          }, []);
+
+  const onRefreshData = async () => {
+     setRefresh(true);
+    obtenerDatos();
+    setRefresh(false);
+  }
 
   const obtenerDatos = async () => {
     const dataUsuario = await getObtenerDatosDeUsuario();
@@ -91,73 +99,102 @@ export default function PerfilUsuarioScreen() {
   }
 
   return (
-  <View style={perfilStyles.containerPerfil}>
-  <View style={perfilStyles.perfilHeader}>
-    {datosusuario?.url_Perfil === null || datosusuario?.url_Perfil === "" ? (
-      <Image source={logoSinUsuario} style={perfilStyles.perfilImagen}/>
-    ): (
-      <Image source={{ uri: datosusuario?.url_Perfil }} style={perfilStyles.perfilImagen}/>
-    )}
-    <View>
-      <Text style={perfilStyles.usernameText}>{datosusuarioregistro?.username}
-      </Text>
-      <Text style={perfilStyles.nombreText}>{datosusuarioregistro?.nombre_Usuario} {datosusuarioregistro?.apellido_Usuario}
-      </Text>
-      <Text style={perfilStyles.nombreTextFecha}> Usuario desde: {datosusuario?.fecha_Creacion
-    ? handleFormatearFecha(datosusuario.fecha_Creacion)
-    : ""}
-     </Text>
-    </View>
-  </View>
+  <ScrollView 
+    style={{ flex: 1, backgroundColor: "#1a1a1a" }}
+    contentContainerStyle={{ paddingBottom: 50 }}
+    showsVerticalScrollIndicator={false}
+    refreshControl={
+        <RefreshControl
+          refreshing={refresh}
+          onRefresh={onRefreshData} // METOOD  A EJECUTAR
+          tintColor="#0cad87ff"    
+          colors={["#09a77fff"]}      
+        />
+      }
+  >
+    <View style={perfilStyles.containerPerfil}>
+      <View style={perfilStyles.perfilHeader}>
+        {datosusuario?.url_Perfil === null || datosusuario?.url_Perfil === "" ? (
+          <Image source={logoSinUsuario} style={perfilStyles.perfilImagen} />
+        ) : (
+          <Image source={{ uri: datosusuario?.url_Perfil }} style={perfilStyles.perfilImagen} />
+        )}
 
-  {/* DIVIDER */}
-  <View style={perfilStyles.divider} />
+        <View>
+          <Text style={perfilStyles.usernameText}>
+            {datosusuarioregistro?.username}
+          </Text>
 
-  {/* BOTÓN ME GUSTAS */}
-  <Pressable onPress={handleVerMeGustasScreen} style={perfilStyles.botonRectangulo}>
-    <Text style={perfilStyles.botonRectanguloText}>Ver Me Gustas</Text>
-    <Image source={logoLike} style={perfilStyles.iconoDerecha}/>
-  </Pressable>
+          <Text style={perfilStyles.nombreText}>
+            {datosusuarioregistro?.nombre_Usuario} {datosusuarioregistro?.apellido_Usuario}
+          </Text>
 
-  {/* DIVIDER */}
-  <View style={perfilStyles.divider} />
-
-  {/* SECCIÓN PLAYLIST */}
-  <Text style={perfilStyles.tituloSeccion}>Playlists Creadas por Ti</Text>
-
-  <FlatList
-      data={albumes}
-      numColumns={2} 
-      keyExtractor={(item) => item.id.toString()}
-      contentContainerStyle={perfilStyles.flatListContainer}
-      columnWrapperStyle={perfilStyles.fila}
-      renderItem={({ item }) => (
-        <View style={perfilStyles.itemContainer}>
-          <Pressable
-            onPress={() => handleVerAlbum(item.id)}
-            style={({ pressed }) => [
-              perfilStyles.pressable,
-              pressed && perfilStyles.hover, 
-            ]}
-          >
-            <Image
-              source={{ uri: item.imagen }}
-              resizeMode="cover"
-              style={perfilStyles.imagen}
-            />
-          </Pressable>
-          <Text numberOfLines={1} style={perfilStyles.nombre}>
-            {item.nombre}
+          <Text style={perfilStyles.nombreTextFecha}>
+            Usuario desde:{" "}
+            {datosusuario?.fecha_Creacion
+              ? handleFormatearFecha(datosusuario.fecha_Creacion)
+              : ""}
           </Text>
         </View>
-      )}
-    />
-  <Pressable onPress={handleIrConfiguracion} style={perfilStyles.botonRectangulo}>
-    <Text style={perfilStyles.botonRectanguloText}>Ir a Configuración</Text>
-  </Pressable>
-  <View style={{ marginTop: 20 }}>
-    <CerrarSesionButton onPress={handleCerrarSesion} />
-  </View>
-</View>
-  );
+      </View>
+
+      {/* DIVIDER */}
+      <View style={perfilStyles.divider} />
+
+      {/* Botón ME GUSTAS */}
+      <Pressable onPress={handleVerMeGustasScreen} style={perfilStyles.botonRectangulo}>
+        <Text style={perfilStyles.botonRectanguloText}>Ver Me Gustas</Text>
+        <Image source={logoLike} style={perfilStyles.iconoDerecha} />
+      </Pressable>
+
+      {/* DIVIDER */}
+      <View style={perfilStyles.divider} />
+
+      {/* PLAYLISTS */}
+      <Text style={perfilStyles.tituloSeccion}>Playlists Creadas por Ti</Text>
+
+      <FlatList
+        data={albumes}
+        numColumns={2}
+        scrollEnabled={false} // ← CLAVE: para que sea parte del ScrollView
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={perfilStyles.flatListContainer}
+        columnWrapperStyle={perfilStyles.fila}
+        renderItem={({ item }) => (
+          <View style={perfilStyles.itemContainer}>
+            <Pressable
+              onPress={() => handleVerAlbum(item.id)}
+              style={({ pressed }) => [
+                perfilStyles.pressable,
+                pressed && perfilStyles.hover,
+              ]}
+            >
+              <Image
+                source={{ uri: item.imagen }}
+                resizeMode="cover"
+                style={perfilStyles.imagen}
+              />
+            </Pressable>
+            <Text numberOfLines={1} style={perfilStyles.nombre}>
+              {item.nombre}
+            </Text>
+          </View>
+        )}
+      />
+
+      {/* CONFIGURACIÓN */}
+      <Pressable onPress={handleIrConfiguracion} style={perfilStyles.botonRectangulo}>
+        <Text style={perfilStyles.botonRectanguloText}>Ir a Configuración</Text>
+        <Image source={logoTuerca} style={perfilStyles.iconoDerechaConfig} />
+      </Pressable>
+
+      {/* CERRAR SESIÓN */}
+      <View style={{ marginTop: 20 }}>
+        <CerrarSesionButton onPress={handleCerrarSesion} />
+      </View>
+
+    </View>
+  </ScrollView>
+);
+
 }
