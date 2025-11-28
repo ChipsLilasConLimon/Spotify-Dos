@@ -41,6 +41,19 @@ export default function TabLayout() {
     )
         }}
       />
+      <Tabs.Screen
+        name="crear"
+        options={{
+          tabBarLabel: 'Crear',
+          title: 'Crear',
+          tabBarIcon: () => (
+        <Image
+        source={require('../../assets/images/crear-logo.png')}
+        style={{ width: 22, height: 22, resizeMode: 'contain', marginBottom: -4 }}
+      />
+    )
+        }}
+      />
 
       <Tabs.Screen
   name="cuenta"
@@ -55,7 +68,6 @@ export default function TabLayout() {
     )
   }}
 />
-
     </Tabs>
   );
 }

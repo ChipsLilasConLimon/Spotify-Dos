@@ -63,7 +63,7 @@ export const perfilStyles = StyleSheet.create({
   iconoDerecha: {
     width: 22,
     height: 22,
-    tintColor: "#fff",
+    tintColor: "#f22929ff",
   },
 
   // === TÍTULOS DE SECCIONES ===
@@ -79,5 +79,46 @@ export const perfilStyles = StyleSheet.create({
     color: "#b5b5b5",
     fontSize: 12,
     marginTop: 3,
+  },
+
+
+  flatListContainer: {
+   paddingHorizontal: 12,
+  paddingBottom: 80,
+  paddingTop: 10,
+  },
+
+  fila: {
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+
+  itemContainer: {
+     width: "48%",
+    alignItems: "center",
+  },
+
+  pressable: {
+    width: "100%",
+    aspectRatio: 1,
+    borderRadius: 3,
+    overflow: "hidden",
+  },
+
+  hover: {
+    opacity: 0.9,
+  },
+
+  imagen: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 2,
+  },
+  nombre: {
+    marginTop: 6,
+    fontSize: 14,
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "500",
   },
 });

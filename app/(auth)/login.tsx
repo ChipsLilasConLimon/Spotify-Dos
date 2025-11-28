@@ -94,16 +94,17 @@ export default function LoginScreen() {
       <View style={globalStyles.headerLogin}>
         <Text style={globalStyles.headerTitleLogin}>Iniciar Sesión</Text>
         <Image source={logoImage} style={globalStyles.logoImageLogin} />
-      </View>
-
-      <View style={globalStyles.cardInputLogin}>
         {isLoading && (
           <ActivityIndicator
             style={globalStyles.loaderLogin}
             size="large"
-            color="#0000ff"
+            color="#15ccbaff"
           />
         )}
+      </View>
+
+      <View style={globalStyles.cardInputLogin}>
+        
 
         <Text style={globalStyles.labelLogin}>Usuario o Correo electrónico</Text>
         <TextInput

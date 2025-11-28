@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, Pressable, Text, View } from "react-native";
+import { Alert, FlatList, Image, Pressable, Text, View } from "react-native";
 import logoLike from "../../../assets/images/me-gusta-logo.png";
 import logoSinUsuario from "../../../assets/images/usuario-sin-foto.png";
 import CerrarSesionButton from '../../../components/CerrarSesionPressable';
@@ -24,9 +24,16 @@ type Usuario = {
   password_Usuario: string | null;
   rol: string;
 };
+type Albumes = {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  imagen: string;
+}
 export default function PerfilUsuarioScreen() {
   const [datosusuario, setDatosUsuario] = useState<DataUsuarios>();
   const [datosusuarioregistro, setDatosUsuarioRegistro] = useState<Usuario>();
+  const [albumes, setAlbumes] = useState<Albumes[]>([]);
   const router = useRouter();
 
    useEffect(() => {
@@ -44,8 +51,15 @@ export default function PerfilUsuarioScreen() {
             };
     const dataUsuarioRegistro = await getObtenerDatosDeUsuarioRegistro();
     const dataPlaylist = await getObtenerTodasPlaylistUsuario();
+     const nuevoDataAlbumes = dataPlaylist.map((item: { id: any; nombre: any; descripcion: any; imagen: any }) => ({
+                id: item.id,
+                nombre: item.nombre,
+                descripcion: item.descripcion,
+                imagen: item.imagen
+            }));
     setDatosUsuario(datosUsuarioMapeado);
     setDatosUsuarioRegistro(dataUsuarioRegistro);
+    setAlbumes(nuevoDataAlbumes);
   };
 
   const handleCerrarSesion = async  () => {
@@ -71,6 +85,10 @@ export default function PerfilUsuarioScreen() {
           const nombreMes = meses[parseInt(month) - 1];
           return `${parseInt(day)} de ${nombreMes} de ${year}`;
        }
+
+  const handleVerAlbum = (id: number) => {
+
+  }
 
   return (
   <View style={perfilStyles.containerPerfil}>
@@ -98,7 +116,6 @@ export default function PerfilUsuarioScreen() {
   {/* BOTÓN ME GUSTAS */}
   <Pressable onPress={handleVerMeGustasScreen} style={perfilStyles.botonRectangulo}>
     <Text style={perfilStyles.botonRectanguloText}>Ver Me Gustas</Text>
-    {/* ICONO (USAR SVG O PNG) */}
     <Image source={logoLike} style={perfilStyles.iconoDerecha}/>
   </Pressable>
 
@@ -107,9 +124,36 @@ export default function PerfilUsuarioScreen() {
 
   {/* SECCIÓN PLAYLIST */}
   <Text style={perfilStyles.tituloSeccion}>Playlists Creadas por Ti</Text>
+
+  <FlatList
+      data={albumes}
+      numColumns={2} 
+      keyExtractor={(item) => item.id.toString()}
+      contentContainerStyle={perfilStyles.flatListContainer}
+      columnWrapperStyle={perfilStyles.fila}
+      renderItem={({ item }) => (
+        <View style={perfilStyles.itemContainer}>
+          <Pressable
+            onPress={() => handleVerAlbum(item.id)}
+            style={({ pressed }) => [
+              perfilStyles.pressable,
+              pressed && perfilStyles.hover, 
+            ]}
+          >
+            <Image
+              source={{ uri: item.imagen }}
+              resizeMode="cover"
+              style={perfilStyles.imagen}
+            />
+          </Pressable>
+          <Text numberOfLines={1} style={perfilStyles.nombre}>
+            {item.nombre}
+          </Text>
+        </View>
+      )}
+    />
   <Pressable onPress={handleIrConfiguracion} style={perfilStyles.botonRectangulo}>
     <Text style={perfilStyles.botonRectanguloText}>Ir a Configuración</Text>
-    <Image source={logoLike} style={perfilStyles.iconoDerecha}/>
   </Pressable>
   <View style={{ marginTop: 20 }}>
     <CerrarSesionButton onPress={handleCerrarSesion} />

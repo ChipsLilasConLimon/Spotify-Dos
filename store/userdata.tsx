@@ -23,3 +23,10 @@ export const useUserDataRegisterStore = create((set) => ({
     setDatosUsuarioRegistro: (id: number,  username: string, email: string, apellido_Usuario: string, nombre_Usuario: string, password_Usuario: string, rol: string,) => set({id, username, email, apellido_Usuario, nombre_Usuario, password_Usuario, rol}),
     deleteDatosUsuarioRegistro: () =>set({ id: null, username: null, email: null, apellido_Usuario: null, nombre_Usuario: null, password_Usuario: null, rol: null }),
 }));
+
+export const useAlbumesUsuarioStore = create((set) => ({
+    array: [],
+   
+    sePlaylistUser: (nuevoArray: []) => set({array: nuevoArray}),
+    deletePlaylistUsuario: () =>set({ array: []}),
+}));
