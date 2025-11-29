@@ -94,10 +94,9 @@ export default function PerfilUsuarioScreen() {
           return `${parseInt(day)} de ${nombreMes} de ${year}`;
        }
 
-  const handleVerAlbum = (id: number) => {
-
+  const handleVerAlbum = (playlistId: number, nombre: string, descripcion: string, imagen: string) => {
+    router.push(`/(tabs)/cuenta/ver-playlist-usuario?playlistId=${playlistId}&nombre=${nombre}&descripcion=${descripcion}&imagen=${imagen}`);
   }
-
   return (
   <ScrollView 
     style={{ flex: 1, backgroundColor: "#1a1a1a" }}
@@ -163,7 +162,7 @@ export default function PerfilUsuarioScreen() {
         renderItem={({ item }) => (
           <View style={perfilStyles.itemContainer}>
             <Pressable
-              onPress={() => handleVerAlbum(item.id)}
+              onPress={() => handleVerAlbum(item.id, item.nombre, item.descripcion, item.imagen)}
               style={({ pressed }) => [
                 perfilStyles.pressable,
                 pressed && perfilStyles.hover,

@@ -30,3 +30,27 @@ export const useAlbumesUsuarioStore = create((set) => ({
     sePlaylistUser: (nuevoArray: []) => set({array: nuevoArray}),
     deletePlaylistUsuario: () =>set({ array: []}),
 }));
+
+export interface Data {
+  id: string;
+  id_playlist: string;
+  id_cancion: string;
+  nombre_cancion: string;
+  imagen_cancion: string;
+  artista_cancion: string;
+}
+
+export type UsersDictionary = {
+  [idPlaylist: string]: Data[]; 
+};
+export const useAlbumesDeatllesUsuarioStore = create((set) => ({
+    diccionario: {},
+
+    setDatosDePlaylistsUsuario: (idPlaylist: string, datos: Data[]) => set((state: { diccionario: any; }) => ({
+      diccionario: {
+        ...state.diccionario,
+        [idPlaylist]: datos,
+      },
+    })),
+    deleteDatosDePlaylistUsuario: () =>set({ diccionario: {}}),
+}));

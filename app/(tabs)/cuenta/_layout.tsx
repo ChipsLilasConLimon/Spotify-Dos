@@ -7,6 +7,7 @@ export default function MainLayout() {
       <Stack.Screen name="index" options={{ title: "Perfil" }} />
       <Stack.Screen name="configuracion" options={{ title: "Configuracion" }} />
       <Stack.Screen name="ver-megusta" options={{ title: "Me Gusta" }} />
+      <Stack.Screen name="ver-playlist-usuario" options={{ title: "Playlist" }} />
     </Stack>
   );
 }

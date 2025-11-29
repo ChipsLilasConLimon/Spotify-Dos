@@ -120,11 +120,40 @@ export const crearStyles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
-
   labelElegirImagen: {
     fontSize: 17,
     color: "#ffffffcc",
     marginBottom: 2,
     marginTop: 25,
+  },
+  buttonHover: {
+    backgroundColor: "#119270ff",
+  },
+  buttonPressed: {
+    backgroundColor: "#1e9575ff",
+  },
+    // ===== MODAL DE CARGA =====
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalBox: {
+    width: 275,
+    height: 130,
+    paddingVertical: 25,
+    paddingHorizontal: 20,
+    backgroundColor: "#111",
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalText: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: 15,
   },
 });

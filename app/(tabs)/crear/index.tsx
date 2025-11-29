@@ -1,7 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Image, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import logoEliminar from "../../../assets/images/equis.png";
 import { getCrearAlbum, postPostearImagenAlbum } from '../../../services/playlistService';
 import { crearStyles } from "../../../styles/crearStyles";
@@ -10,6 +10,8 @@ export default function PerfilUsuarioScreen() {
   const [nombreplaylist, setNombrePlaylist] = useState('');
   const [descripcionplaylist, setDescripcionPlaylist] = useState('');
   const [imagen, setImagen] = useState('');
+  const [isHover, setIsHover] = useState(false);
+  const [modalvisibilidad, setModalVisibilidad] = useState(false);
 
   const router = useRouter();
   // ABRIR GALERÍA
@@ -35,10 +37,12 @@ export default function PerfilUsuarioScreen() {
       alert(`Por lo menos selecciona un nombre para la playlist`);
       return;
     }
+    setModalVisibilidad(true);
     let urlImagen = "";
     if(imagen !== "") {
       urlImagen = await postPostearImagenAlbum(imagen);
       if(urlImagen === null){
+        setModalVisibilidad(false);
         alert(`No se pudo subir la imagen`);
         return;
       }
@@ -48,6 +52,7 @@ export default function PerfilUsuarioScreen() {
       Descripcion: descripcionplaylist,
       Imagen: urlImagen,
     });
+    setModalVisibilidad(false);
      alert(`Se registro la playlist`);
   }
 
@@ -104,10 +109,36 @@ export default function PerfilUsuarioScreen() {
 
   <View style={crearStyles.divider} />
 
-  <Pressable onPress={handleCrearPlaylist} style={crearStyles.crearButton}>
+  <Pressable 
+  onPress={handleCrearPlaylist} 
+  onHoverIn={()=>setIsHover(true)} 
+  onHoverOut={()=>setIsHover(false)} 
+  style={({ pressed }) => [
+    crearStyles.crearButton,
+    isHover && crearStyles.buttonHover,
+    pressed && crearStyles.buttonPressed,
+    ]} >
     <Text style={crearStyles.crearButtonText}>Crear</Text>
+    
   </Pressable>
 
+
+  <Modal
+  animationType="slide"
+  transparent={true}
+  visible={modalvisibilidad}
+onRequestClose={() => {
+ // Funciona en Android cuando se presiona el botón de atrás
+setModalVisibilidad(!modalvisibilidad);
+        }}
+      >
+        <View style={crearStyles.centeredView}>
+        <View style={crearStyles.modalBox}>
+            <Text style={crearStyles.modalText}>Creando playlist...</Text>
+            <ActivityIndicator size="large" color="#07d96dff" />
+          </View>
+          </View>
+      </Modal>
 </ScrollView>
   );
 }
