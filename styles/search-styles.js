@@ -21,13 +21,6 @@ screen: {
   backgroundColor: "#000",  
 },
 // PARA ELEMENTOS
-cancionCard: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingVertical: 12,
-  paddingHorizontal: 10,
-  backgroundColor: '#0f0f0f',
-},
 albumImage: {
   width: 55,
   height: 55,
@@ -65,5 +58,28 @@ fadeBottom: {
     bottom: 0,
     width: '100%',
     height: 60,
-  }
+  },
+  cancionRow: {
+  flexDirection: "row",
+  alignItems: "center",
+  width: "100%",
+  paddingHorizontal: 10,
+  backgroundColor: "#0f0f0f",
+},
+cancionCard: {
+  flexDirection: "row",
+  alignItems: "center",
+  flex: 1,  // ← Esto empuja el botón a la derecha
+  paddingVertical: 12,
+},
+addButton: {
+  padding: 10,
+  justifyContent: "center",
+  alignItems: "center",
+},
+addIcon: {
+  width: 24,
+  height: 24,
+  tintColor: "#fff", // ← Hace la imagen blanca
+},
 });

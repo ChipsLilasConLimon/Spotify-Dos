@@ -25,6 +25,7 @@ export default function PerfilUsuarioScreen() {
         mediaTypes: ["images"],
         allowsEditing: true,
         quality: 1,
+        aspect: [1, 1],
         base64: true,
       });
       if (!result.canceled) {

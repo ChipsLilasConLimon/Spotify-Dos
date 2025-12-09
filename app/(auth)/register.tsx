@@ -1,203 +1,198 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ImageBackground, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import background from '../../assets/images/fondo-signup.jpg';
 import { register } from '../../services/authService';
+import { globalStyles } from "../../styles/global-styles";
 
 export default function RegisterScreen() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [apellidoP, setApellidoP] = useState("");
-  const [apellidoM, setApellidoM] = useState("");
-  const [name, setName] = useState("");
+  const [correo, setCorreo] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async() => {
+    setIsLoading(true);
      if (!username || !password) {
-      alert(`Error, Por favor, rellene todos los datos`);
+      alert(`Error, rellene todos los datos`);
+      setIsLoading(false);
       return;
     }
-    if (!apellidoP || !apellidoM) {
-      alert(`Error, Por favor, rellene todos los datos`);
+    if (!nombre || !apellido) {
+      alert(`Error, rellene todos los datos`);
+      setIsLoading(false);
       return;
     }
-    if (!name) {
-      alert(`Error, Por favor, rellene todos los datos`);
+    if (!correo) {
+      alert(`Error, rellene todos los datos`);
+      setIsLoading(false);
       return;
     }
 
     try{
       const authResponse = await register({
-        NombreUsuario: username,
-        PasswordUsuario: password,
-        Nombre: name,
-        ApellidoPaterno: apellidoP,
-        ApellidoMaterno: apellidoM
+        Username: username,
+        Password: password,
+        Nombres: nombre,
+        Apellidos: apellido,
+        Correo: correo
       });
-      console.log('authResponse:', authResponse);
-       alert(`Inicio Exitoso: ${authResponse.mensaje}`);
+      setIsLoading(false);
+      alert(`Registro Exitoso: ${authResponse.mensaje}`);
         router.replace("/(auth)/login");
     } catch(err){
-      console.error('Login error:', err);
+      setIsLoading(false);
       alert(`Error al registrar: No se pudo crear`);
     }
   };
 
+
   return (
-    <View style={{ flex: 1, justifyContent: "center", padding: 15 }}>
-      <Text style={{ fontSize: 24, marginBottom: 20, textAlign: "center" }}>
-        Crear Cuenta
-      </Text>
+  <ImageBackground
+    source={background}
+    style={styles.background}
+    resizeMode="cover"
+  >
+    <View style={styles.content}>
+
+      <Text style={styles.title}>Crear Cuenta</Text>
+       {isLoading && (
+                <ActivityIndicator
+                  style={globalStyles.loaderLogin}
+                  size="large"
+                  color="#15ccbaff"
+                />
+              )}
+
+      <Text style={styles.label}>Username</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Nombre"
+        placeholderTextColor="#999"
+        value={username}
+        onChangeText={setUsername}
+      />
+
+      <Text style={styles.label}>Correo Electrónico</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Apellido Paterno"
+        placeholderTextColor="#999"
+        value={correo}
+        onChangeText={setCorreo}
+      />
 
       <Text style={styles.label}>Nombre</Text>
       <TextInput
         style={styles.input}
-        placeholder="Nombre"
-        value={name}
-        onChangeText={setName}
-      />
-      <Text style={styles.label}>Apellido Paterno</Text>
-      <TextInput
-        placeholder="Apellido Paterno"
-        value={apellidoP}
-        onChangeText={setApellidoP}
-         style={styles.input}
-      />
-       <Text style={styles.label}>Apellido Materno</Text>
-      <TextInput
         placeholder="Apellido Materno"
-        value={apellidoM}
-        onChangeText={setApellidoM}
-        style={styles.input}
+        placeholderTextColor="#999"
+        value={nombre}
+        onChangeText={setNombre}
       />
-      <Text style={styles.label}>Nombre de Usuario</Text>
+
+      <Text style={styles.label}>Apellido</Text>
       <TextInput
+        style={styles.input}
         placeholder="Nombre de Usuario"
-        value={username}
-        onChangeText={setUsername}
-         style={styles.input}
+        placeholderTextColor="#999"
+        value={apellido}
+        onChangeText={setApellido}
       />
+
       <Text style={styles.label}>Contraseña</Text>
       <TextInput
+        style={styles.input}
         placeholder="Contraseña"
+        placeholderTextColor="#999"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
-         style={styles.input}
       />
 
       <Pressable style={styles.button} onPress={handleRegister}>
-       <Text style={styles.buttonText}>Registrar</Text>
+        <Text style={styles.buttonText}>Registrar</Text>
       </Pressable>
 
-      <TouchableOpacity
-        onPress={() => router.back()}
-        style={{ marginTop: 15 }}>
-          
-        <Text style={{ textAlign: "center", color: "blue" }}>
+      <TouchableOpacity onPress={() => router.back()}>
+        <Text style={styles.loginText}>
           ¿Ya tienes cuenta? Inicia sesión
         </Text>
       </TouchableOpacity>
+
     </View>
-  );
+  </ImageBackground>
+);
 }
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    backgroundColor: '#0D1B64',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: 30,
+
+  content: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 25,
   },
-  headerTitle: {
-    color: '#fff',
-    fontSize: 28,
-    fontWeight: 'bold',
+
+  title: {
+    fontSize: 34,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 25,
+    color: "#fff",
+    textShadowColor: "rgba(0,0,0,0.6)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 8,
   },
-  headerSubtitle: {
-    color: '#D8D8D8',
-    fontSize: 14,
-    marginTop: 5,
-  },
-  logoContainer: {
-    marginTop: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoCircleLarge: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#fff',
-    position: 'absolute',
-  },
-  logoCircleSmallLeft: {
-    width: 35,
-    height: 35,
-    borderRadius: 20,
-    backgroundColor: '#1976D2',
-    position: 'absolute',
-    left: -40,
-    top: 30,
-  },
-  logoCircleSmallRight: {
-    width: 35,
-    height: 35,
-    borderRadius: 20,
-    backgroundColor: '#1976D2',
-    position: 'absolute',
-    right: -40,
-    top: 30,
-  },
-  card: {
-    width: '85%',
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    padding: 25,
-    elevation: 5,
-  },
-  loader: {
-    alignSelf: 'center',
-    marginBottom: 15,
-  },
+
   label: {
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#fff",
     marginBottom: 5,
     marginTop: 10,
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 6,
   },
+
   input: {
+    backgroundColor: "rgba(255,255,255,0.9)",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 8,
+    borderColor: "#fff",
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
   },
-  errorText: {
-    color: 'red',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
+
   button: {
-    backgroundColor: '#1976D2',
+    backgroundColor: "#0f8880ff",
     paddingVertical: 12,
     borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
+    alignItems: "center",
+    marginTop: 15,
   },
-  buttonregister: {
-    backgroundColor: '#144779ff',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 18,
-  },
+
   buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
+  },
+
+  loginText: {
+    marginTop: 20,
+    textAlign: "center",
+    color: "#fff",
+    fontWeight: "600",
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 6,
   },
 });

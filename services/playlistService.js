@@ -52,3 +52,13 @@ export const getObtnerDatosPlaylistUsuario = async (idPlaylist) => {
      store.setDatosDePlaylistsUsuario(idPlaylist, data);
      return data;
 };
+export const postAgregarCancionPlaylist = async (dto) => {
+  const response = await api.post(
+    "playlist/add-cancion-playlist", dto );
+  return data;
+}
+export const deleteEliminarCancionPlaylist = async (idCancion, idPlaylist) => {
+  const response = await api.delete(`playlist/eliminar-cancion?dCancion=${idCancion}&idPlaylist=${idPlaylist}`);
+  const data = response.data.datos;
+  return data;
+}
