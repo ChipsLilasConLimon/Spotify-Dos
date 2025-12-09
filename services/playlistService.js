@@ -1,4 +1,4 @@
-import { useAlbumesDeatllesUsuarioStore, useAlbumesUsuarioStore } from "../store/userdata";
+import { useAlbumesUsuarioStore } from "../store/userdata";
 import api from './apiClient';
 
 export const getObtenerTodasPlaylistUsuario = async () => {
@@ -42,15 +42,9 @@ export const getCrearAlbum = async (dto) => {
 };
 
 export const getObtnerDatosPlaylistUsuario = async (idPlaylist) => {
-    const store = useAlbumesDeatllesUsuarioStore.getState();
-    const diccionario = store.diccionario;
-    if(diccionario[idPlaylist]) {
-      return diccionario[idPlaylist];
-    }
-    const response = await api.get(`playlist/obtener-canciones-playlist?id=${idPlaylist}`);
-    const data = response.data.datos;
-     store.setDatosDePlaylistsUsuario(idPlaylist, data);
-     return data;
+      const response = await api.get(`playlist/obtener-canciones-playlist?id=${idPlaylist}`);
+      const data = response.data.datos;
+      return data;
 };
 export const postAgregarCancionPlaylist = async (dto) => {
   const response = await api.post(

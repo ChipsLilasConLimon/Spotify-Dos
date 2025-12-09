@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Pressable, Text, View } from 'react-native';
 import { getObtnerDatosPlaylistUsuario } from '../../../services/playlistService';
 import { globalStyles } from "../../../styles/global-styles";
+import { playlistUsuarioStyles } from "../../../styles/playlist-usuario-styles";
 
 export default function PlaylistUsuarioDetalleScreen() {
 type CancionPlaylist = {
@@ -19,20 +20,19 @@ type CancionPlaylist = {
       
 
      useEffect(() => {
-         if (playlistId && nombre && descripcion && imagen) fetchDatosPlaylist();
-       }, [playlistId, nombre, descripcion, imagen]);
+        fetchDatosPlaylist();
+       }, []);
 
        const fetchDatosPlaylist = async () => {
         setIsLoading(true);
          try {
             const dataCancionesAlbum = await getObtnerDatosPlaylistUsuario(playlistId);
-            const nuevoDataCancionesAlbum = dataCancionesAlbum.map((item: { id: number; id_playlist: string; id_cancion: string; nombre_cancion: string; imagen_cancion: string; artista_cancion: string;}) => ({
-              id: item.id,
-              id_playlist: item.id_playlist,
-              id_cancion: item.id_cancion,
-              nombre_cancion: item.nombre_cancion,
-              imagen_cancion: item.imagen_cancion,
-              artista_cancion: item.artista_cancion,
+            const nuevoDataCancionesAlbum = dataCancionesAlbum.map((item: any) => ({
+              id: item.id_Cancion,
+              id_playlist: playlistId, 
+              nombre_cancion: item.nombre_Cancion,
+              imagen_cancion: item.imagen_Cancion,
+              artista_cancion: item.artista_Cancion,
             }));
             setCancionesAlbumes(nuevoDataCancionesAlbum);
             } catch (err) {
@@ -78,12 +78,21 @@ type CancionPlaylist = {
   renderItem={({ item }) => (
     <View style={globalStyles.grupoCardMainPlaylist}>
       <Pressable
-        onPress={() => handleReproducirMusica(item.id)}
-        style={globalStyles.botonCardMainPlaylist}
-      >
-        <Text style={globalStyles.cancionTituloPlaylist}>{item.nombre_cancion}</Text>
-        <Text style={globalStyles.cancionDuracionPlaylist}>{item.artista_cancion}</Text>
-      </Pressable>
+  onPress={() => handleReproducirMusica(item.id)}
+  style={globalStyles.botonCardMainPlaylist}
+>
+  <View style={playlistUsuarioStyles.itemContainer}>
+    <Image
+      source={{ uri: item.imagen_cancion }}
+      style={playlistUsuarioStyles.albumImage}
+      resizeMode="cover"
+    />
+    <View style={playlistUsuarioStyles.textContainer}>
+      <Text style={globalStyles.cancionTituloPlaylist}>{item.nombre_cancion}</Text>
+      <Text style={globalStyles.cancionDuracionPlaylist}>{item.artista_cancion}</Text>
+    </View>
+  </View>
+</Pressable>
     </View>
   )}
 />
