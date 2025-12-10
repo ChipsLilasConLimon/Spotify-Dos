@@ -5,6 +5,7 @@ import logoLike from "../../../assets/images/me-gusta-logo.png";
 import logoTuerca from "../../../assets/images/tuerca.png";
 import logoSinUsuario from "../../../assets/images/usuario-sin-foto.png";
 import CerrarSesionButton from '../../../components/CerrarSesionPressable';
+import { useGlobalStore } from "../../../contexts/global-context";
 import { getObtenerTodasPlaylistUsuario } from '../../../services/playlistService';
 import { getObtenerDatosDeUsuario, getObtenerDatosDeUsuarioRegistro } from '../../../services/usuariosdatosService';
 import { perfilStyles } from "../../../styles/perfil-styles";
@@ -35,7 +36,8 @@ export default function PerfilUsuarioScreen() {
   const [refresh, setRefresh] = useState(false);
   const [datosusuario, setDatosUsuario] = useState<DataUsuarios>();
   const [datosusuarioregistro, setDatosUsuarioRegistro] = useState<Usuario>();
-  const [albumes, setAlbumes] = useState<Albumes[]>([]);
+  const { playlists, setPlaylists } = useGlobalStore();
+
   const router = useRouter();
 
    useEffect(() => {
@@ -58,16 +60,13 @@ export default function PerfilUsuarioScreen() {
                 fecha_Creacion: dataUsuario.fecha_Creacion
             };
     const dataUsuarioRegistro = await getObtenerDatosDeUsuarioRegistro();
+    if (playlists.length === 0) {
     const dataPlaylist = await getObtenerTodasPlaylistUsuario();
-     const nuevoDataAlbumes = dataPlaylist.map((item: { id: any; nombre: any; descripcion: any; imagen: any }) => ({
-                id: item.id,
-                nombre: item.nombre,
-                descripcion: item.descripcion,
-                imagen: item.imagen
-            }));
-    setDatosUsuario(datosUsuarioMapeado);
-    setDatosUsuarioRegistro(dataUsuarioRegistro);
-    setAlbumes(nuevoDataAlbumes);
+    setPlaylists(dataPlaylist); // ← GUARDADO GLOBAL
+  }
+   setDatosUsuario(datosUsuarioMapeado);
+   setDatosUsuarioRegistro(dataUsuarioRegistro);
+    
   };
 
   const handleCerrarSesion = async  () => {
@@ -153,7 +152,7 @@ export default function PerfilUsuarioScreen() {
       <Text style={perfilStyles.tituloSeccion}>Playlists Creadas por Ti</Text>
 
       <FlatList
-        data={albumes}
+        data={playlists}
         numColumns={2}
         scrollEnabled={false} // ← CLAVE: para que sea parte del ScrollView
         keyExtractor={(item) => item.id.toString()}

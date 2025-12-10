@@ -6,11 +6,16 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Image } from 'react-native';
+import { MenuProvider } from "react-native-popup-menu";
+import { GlobalProvider } from "../../contexts/global-context";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
+    <>
+    <MenuProvider>
+      <GlobalProvider>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
@@ -69,5 +74,8 @@ export default function TabLayout() {
   }}
 />
     </Tabs>
+    </GlobalProvider>
+    </MenuProvider>
+    </>
   );
 }

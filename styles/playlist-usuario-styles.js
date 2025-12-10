@@ -1,18 +1,37 @@
 import { StyleSheet } from "react-native";
 
 export const playlistUsuarioStyles = StyleSheet.create({
-albumImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 6,
+rowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
   },
+
+  itemTouchable: {
+    flex: 1, 
+  },
+
   itemContainer: {
     flexDirection: 'row',
-    alignItems: 'center', 
+    alignItems: 'center',
   },
+
+  albumImage: {
+    width: 55,
+    height: 55,
+    borderRadius: 6,
+  },
+
   textContainer: {
     marginLeft: 12,
     justifyContent: 'center',
-    flex: 1,
+    flexShrink: 1,
+  },
+
+  menuContainer: {
+    marginLeft: 10,
+    padding: 5,
   },
 });

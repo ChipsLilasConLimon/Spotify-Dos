@@ -1,18 +1,10 @@
-import { useAlbumesUsuarioStore } from "../store/userdata";
 import api from './apiClient';
 
 export const getObtenerTodasPlaylistUsuario = async () => {
-  const state = useAlbumesUsuarioStore.getState();
-  const { array } = state;
-  if (Array.isArray(array) && array.length > 0) {
-  return array; 
-}
-  const response = await api.get(`playlist/obtener-playlists`);
-  state.sePlaylistUser(
-    response.data.datos
-  );
+  const response = await api.get("playlist/obtener-playlists");
   return response.data.datos;
 };
+
 export const postPostearImagenAlbum = async (imagenBase64) => {
   const body = {
     imagen: imagenBase64,
@@ -20,39 +12,26 @@ export const postPostearImagenAlbum = async (imagenBase64) => {
   const response = await api.post(`cloudinary/subir-imagen-album`, body);
   return response.data;
 };
+
 export const getCrearAlbum = async (dto) => {
-  try{
-    const state = useAlbumesUsuarioStore.getState();
     const response = await api.post(`playlist/crear`, dto);
-    const data = response.data.datos;
-    const nuevoAlbum = {
-    id: data.id,
-    nombre: data.nombre,
-    descripcion: data.descripcion,
-    imagen: data.imagen
-  };
-    state.sePlaylistUser([
-    ...(state.array || []),
-    nuevoAlbum
-  ]);
-    return nuevoAlbum;
-  }catch(error){
-    console.log("Error al crear el álbum:", error.response?.data || error.message);
-  }
+    return response.data.datos;
 };
 
 export const getObtnerDatosPlaylistUsuario = async (idPlaylist) => {
       const response = await api.get(`playlist/obtener-canciones-playlist?id=${idPlaylist}`);
-      const data = response.data.datos;
-      return data;
+      return response.data.datos;
 };
 export const postAgregarCancionPlaylist = async (dto) => {
   const response = await api.post(
     "playlist/add-cancion-playlist", dto );
-  return data;
-}
+  return response.data.datos;
+};
 export const deleteEliminarCancionPlaylist = async (idCancion, idPlaylist) => {
-  const response = await api.delete(`playlist/eliminar-cancion?dCancion=${idCancion}&idPlaylist=${idPlaylist}`);
-  const data = response.data.datos;
-  return data;
-}
+  const response = await api.delete(`playlist/eliminar-cancion?idCancion=${idCancion}&idPlaylist=${idPlaylist}`);
+  return response.data.datos;
+};
+export const getVerificarCancionPlaylist = async (idCancion, idPlaylist) => {
+      const response = await api.get(`playlist/verificar-cancion-existente?idCancion=${idCancion}&idPlaylist=${idPlaylist}`);
+      return response.data;
+};

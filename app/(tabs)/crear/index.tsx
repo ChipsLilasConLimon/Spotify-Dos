@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ActivityIndicator, Image, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import logoEliminar from "../../../assets/images/equis.png";
+import { useGlobalStore } from "../../../contexts/global-context";
 import { getCrearAlbum, postPostearImagenAlbum } from '../../../services/playlistService';
 import { crearStyles } from "../../../styles/crearStyles";
 
@@ -12,6 +13,8 @@ export default function PerfilUsuarioScreen() {
   const [imagen, setImagen] = useState('');
   const [isHover, setIsHover] = useState(false);
   const [modalvisibilidad, setModalVisibilidad] = useState(false);
+  const { playlists, setPlaylists } = useGlobalStore();
+
 
   const router = useRouter();
   // ABRIR GALERÍA
@@ -53,8 +56,12 @@ export default function PerfilUsuarioScreen() {
       Descripcion: descripcionplaylist,
       Imagen: urlImagen,
     });
+    setPlaylists([...playlists, resulatdos]);
     setModalVisibilidad(false);
      alert(`Se registro la playlist`);
+     setNombrePlaylist("");
+     setDescripcionPlaylist("");
+     setImagen("");
   }
 
   const handleEliminarImagenSeleccionada = () => {
