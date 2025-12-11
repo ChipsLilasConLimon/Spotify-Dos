@@ -1,42 +1,18 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, Image, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
+import { FlatList, Image, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import logoLike from "../../../assets/images/me-gusta-logo.png";
 import logoTuerca from "../../../assets/images/tuerca.png";
 import logoSinUsuario from "../../../assets/images/usuario-sin-foto.png";
-import CerrarSesionButton from '../../../components/CerrarSesionPressable';
 import { useGlobalStore } from "../../../contexts/global-context";
 import { getObtenerTodasPlaylistUsuario } from '../../../services/playlistService';
 import { getObtenerDatosDeUsuario, getObtenerDatosDeUsuarioRegistro } from '../../../services/usuariosdatosService';
 import { perfilStyles } from "../../../styles/perfil-styles";
 
-type DataUsuarios = {
-  id: number;
-  id_Usuario: number;
-  url_Perfil: string | null;
-  descripcion: string | null;
-  fecha_Creacion: string;
-};
-type Usuario = {
-  id: number;
-  username: string;
-  email: string;
-  apellido_Usuario: string | null;
-  nombre_Usuario: string | null;
-  password_Usuario: string | null;
-  rol: string;
-};
-type Albumes = {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  imagen: string;
-}
 export default function PerfilUsuarioScreen() {
   const [refresh, setRefresh] = useState(false);
-  const [datosusuario, setDatosUsuario] = useState<DataUsuarios>();
-  const [datosusuarioregistro, setDatosUsuarioRegistro] = useState<Usuario>();
-  const { playlists, setPlaylists } = useGlobalStore();
+
+  const {playlists, setPlaylists, userData, setUserData, userRegister, setUserRegister,} = useGlobalStore();
 
   const router = useRouter();
 
@@ -45,39 +21,26 @@ export default function PerfilUsuarioScreen() {
          }, []);
 
   const onRefreshData = async () => {
-     setRefresh(true);
-    obtenerDatos();
-    setRefresh(false);
-  }
+  setRefresh(true);
+  await obtenerDatos();
+  setRefresh(false);
+};
 
   const obtenerDatos = async () => {
-    const dataUsuario = await getObtenerDatosDeUsuario();
-    const datosUsuarioMapeado: DataUsuarios = {
-                id: dataUsuario.id,
-                id_Usuario: dataUsuario.id_Usuario,
-                url_Perfil: dataUsuario.url_Perfil,
-                descripcion: dataUsuario.descripcion,
-                fecha_Creacion: dataUsuario.fecha_Creacion
-            };
-    const dataUsuarioRegistro = await getObtenerDatosDeUsuarioRegistro();
+    if (!userData.id) {
+       const dataUsuario = await getObtenerDatosDeUsuario();
+       setUserData(dataUsuario);
+    }
+     if (!userRegister.id) {
+       const dataUsuario = await getObtenerDatosDeUsuarioRegistro();
+       setUserRegister(dataUsuario);
+    }
     if (playlists.length === 0) {
     const dataPlaylist = await getObtenerTodasPlaylistUsuario();
     setPlaylists(dataPlaylist); // ← GUARDADO GLOBAL
-  }
-   setDatosUsuario(datosUsuarioMapeado);
-   setDatosUsuarioRegistro(dataUsuarioRegistro);
-    
+  };
   };
 
-  const handleCerrarSesion = async  () => {
-    try{
-      
-    Alert.alert('Cierre de Sesión', 'Se cerró sesión correctamente');
-    router.push('/(auth)/login');
-    }catch{
-      Alert.alert('Error', 'No se cerró sesión');
-    }
-  };
   const handleIrConfiguracion = () => {
      router.push(`/(tabs)/cuenta/configuracion`);
   }
@@ -112,29 +75,30 @@ export default function PerfilUsuarioScreen() {
   >
     <View style={perfilStyles.containerPerfil}>
       <View style={perfilStyles.perfilHeader}>
-        {datosusuario?.url_Perfil === null || datosusuario?.url_Perfil === "" ? (
+        {userData?.url_Perfil === null || userData?.url_Perfil === "" ? (
           <Image source={logoSinUsuario} style={perfilStyles.perfilImagen} />
         ) : (
-          <Image source={{ uri: datosusuario?.url_Perfil }} style={perfilStyles.perfilImagen} />
+          <Image source={{ uri: userData?.url_Perfil }} style={perfilStyles.perfilImagen} />
         )}
 
         <View>
           <Text style={perfilStyles.usernameText}>
-            {datosusuarioregistro?.username}
+            {userRegister?.username}
           </Text>
 
           <Text style={perfilStyles.nombreText}>
-            {datosusuarioregistro?.nombre_Usuario} {datosusuarioregistro?.apellido_Usuario}
+            {userRegister?.nombre_Usuario} {userRegister?.apellido_Usuario}
           </Text>
 
           <Text style={perfilStyles.nombreTextFecha}>
             Usuario desde:{" "}
-            {datosusuario?.fecha_Creacion
-              ? handleFormatearFecha(datosusuario.fecha_Creacion)
+            {userData?.fecha_Creacion
+              ? handleFormatearFecha(userData.fecha_Creacion)
               : ""}
           </Text>
         </View>
       </View>
+     <Text style={perfilStyles.descripcionText}>{userData?.descripcion ?? ""}</Text>
 
       {/* DIVIDER */}
       <View style={perfilStyles.divider} />
@@ -185,12 +149,6 @@ export default function PerfilUsuarioScreen() {
         <Text style={perfilStyles.botonRectanguloText}>Ir a Configuración</Text>
         <Image source={logoTuerca} style={perfilStyles.iconoDerechaConfig} />
       </Pressable>
-
-      {/* CERRAR SESIÓN */}
-      <View style={{ marginTop: 20 }}>
-        <CerrarSesionButton onPress={handleCerrarSesion} />
-      </View>
-
     </View>
   </ScrollView>
 );

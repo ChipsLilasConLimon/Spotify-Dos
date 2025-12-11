@@ -126,4 +126,13 @@ export const perfilStyles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "500",
   },
+  descripcionText: {
+    color: "#d8d8d8",
+    fontSize: 16,
+    lineHeight: 22,
+    marginTop: 8,
+    marginBottom: 15,
+    paddingHorizontal: 4,
+    fontWeight: "400",
+},
 });
