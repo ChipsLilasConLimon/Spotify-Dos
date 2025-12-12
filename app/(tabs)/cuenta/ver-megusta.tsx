@@ -1,105 +1,108 @@
-import * as ImagePicker from "expo-image-picker";
-import React, { useState } from "react";
-import { ActivityIndicator, Image, Pressable, Text, View } from "react-native";
+// screens/MeGustaScreen.tsx
+import { Entypo } from "@expo/vector-icons";
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, Image, Pressable, Text, View } from 'react-native';
+import { Menu, MenuOption, MenuOptions, MenuTrigger } from "react-native-popup-menu";
+import bannerBackground from "../../../assets/images/background-me-gusta.png";
+import { useGlobalStore } from "../../../contexts/global-context";
+import { deleteEliminarCancionMeGusta, getVerCancionesMeGusta } from '../../../services/usuariosdatosService';
+import { meGustaStyles } from "../../../styles/me-gusta-styles";
+import { playlistUsuarioStyles } from "../../../styles/playlist-usuario-styles";
 
 export default function MeGustaScreen() {
-  const [imagen, setImagen] = useState<string | null>(null);
-  const [urlFinal, setUrlFinal] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { megusta, setMeGusta } = useGlobalStore();
 
+  useEffect(() => {
+    fetchDatosMeGusta();
+  }, []);
 
-  // ABRIR GALERÍA
-  const pickImage = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      alert("Necesitas dar permiso a la galería");
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      quality: 1,
-      base64: true,
-    });
-    if (!result.canceled) {
-      setImagen(result.assets[0].base64!);
-    }
-  };
-
-
-  //SUBIR A CLOUDINARY
-  const subirCloudinary = async () => {
-    if (!imagen) return;
-
-    setLoading(true);
-
-    const data = new FormData();
-    data.append("file", `data:image/jpg;base64,${imagen}`);
-    data.append("upload_preset", "spotify-dos");
-    data.append("cloud_name", "db7ilumql"); 
-
+  const fetchDatosMeGusta = async () => {
+    setIsLoading(true);
     try {
-      const res = await fetch("https://api.cloudinary.com/v1_1/db7ilumql/image/upload", {
-        method: "POST",
-        body: data,
-      });
-
-      const json = await res.json();
-      setUrlFinal(json.secure_url);
-    } catch (error) {
-      console.log("Error subiendo:", error);
+      // Cargamos SIEMPRE del backend para evitar estados inconsistentes
+      const data = await getVerCancionesMeGusta();
+      setMeGusta(data || []);
+    } catch (err) {
+      console.error("Error cargando me gustas:", err);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
+
+  const handleReproducirMusica = (id?: number) => {
+    // implementar reproducción
+  };
+
+  const eliminarCancionMeGusta = async (idCancion: number) => {
+    try {
+      await deleteEliminarCancionMeGusta(idCancion);
+      // Filtramos por la propiedad que usa el listado: id_Cancion
+      setMeGusta((prev: any[]) => prev.filter(c => c.id_Cancion !== idCancion));
+    } catch (err) {
+      console.error("Error al eliminar canción:", err);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <View style={meGustaStyles.centerMain}>
+        <ActivityIndicator size="large" color="#03b3d2ff" />
+        <Text>Cargando...</Text>
+      </View>
+    );
+  }
 
   return (
-    <View style={{ flex: 1, padding: 20, gap: 20 }}>
-      {/* BOTÓN: ELEGIR IMAGEN */}
-      <Pressable
-        onPress={pickImage}
-        style={{
-          backgroundColor: "#333",
-          padding: 15,
-          borderRadius: 10,
-          alignItems: "center",
-        }}
-      >
-        <Text style={{ color: "#fff" }}>Elegir imagen</Text>
-      </Pressable>
-
-      {/* PREVIEW */}
-      {imagen && (
-        <Image
-          source={{ uri: `data:image/jpg;base64,${imagen}` }}
-          style={{ width: 200, height: 200, alignSelf: "center", borderRadius: 10 }}
-        />
-      )}
-
-      {/* BOTÓN: SUBIR A CLOUDINARY */}
-      <Pressable
-        onPress={subirCloudinary}
-        style={{
-          backgroundColor: "#1e88e5",
-          padding: 15,
-          borderRadius: 10,
-          alignItems: "center",
-        }}
-      >
-        <Text style={{ color: "#fff" }}>Subir a Cloudinary</Text>
-      </Pressable>
-
-      {/* LOADING */}
-      {loading && <ActivityIndicator size="large" />}
-
-      {/* URL FINAL */}
-      {urlFinal && (
+    <FlatList
+      data={megusta}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      style={meGustaStyles.backgroundPlaylist}
+      ListHeaderComponent={
         <>
-          <Text style={{ fontWeight: "bold" }}>URL enviada a BD:</Text>
-          <Text style={{ color: "green" }}>{urlFinal}</Text>
+          <View style={meGustaStyles.bannerContainerPlaylist}>
+            <Image source={bannerBackground} style={meGustaStyles.bannerImageMainPlaylist} resizeMode="contain" />
+            <LinearGradient colors={['transparent', 'black']} style={meGustaStyles.fadeBottom} />
+            <View style={meGustaStyles.bannerTextContainer}>
+              <Text style={meGustaStyles.bannerTextPlaylist}>Me Gustas</Text>
+            </View>
+          </View>
+          <View style={meGustaStyles.separadorArtista} />
+          <View style={meGustaStyles.lineaSeparadoraPlaylist} />
         </>
+      }
+      ListEmptyComponent={
+        <Text style={{ color: "#e6e6e6ff", textAlign: "center", marginTop: 20 }}>
+          No hay canciones en Me Gustas.
+        </Text>
+      }
+      renderItem={({ item }) => (
+        <View style={playlistUsuarioStyles.rowContainer}>
+          <Pressable onPress={() => handleReproducirMusica(item.id_Cancion)} style={playlistUsuarioStyles.itemTouchable}>
+            <View style={playlistUsuarioStyles.itemContainer}>
+              <Image source={{ uri: item.imagen_Cancion }} style={playlistUsuarioStyles.albumImage} resizeMode="cover" />
+              <View style={playlistUsuarioStyles.textContainer}>
+                <Text style={meGustaStyles.cancionTituloPlaylist}>{item.nombre_Cancion}</Text>
+                <Text style={meGustaStyles.cancionDuracionPlaylist}>{item.artista_Cancion}</Text>
+              </View>
+            </View>
+          </Pressable>
+
+          <View style={playlistUsuarioStyles.menuContainer}>
+            <Menu>
+              <MenuTrigger>
+                <Entypo name="dots-three-vertical" size={18} color="white" />
+              </MenuTrigger>
+              <MenuOptions>
+                <MenuOption onSelect={() => eliminarCancionMeGusta(item.id_Cancion)}>
+                  <Text style={{ color: "red" }}>Eliminar</Text>
+                </MenuOption>
+              </MenuOptions>
+            </Menu>
+          </View>
+        </View>
       )}
-    </View>
+    />
   );
 }

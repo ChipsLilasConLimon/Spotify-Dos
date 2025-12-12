@@ -1,8 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
-// ============================================
-// 1. VALORES INICIALES PARA PODER RESETEAR
-// ============================================
 export const initialUserData = {
   id: null,
   id_Usuario: null,
@@ -21,10 +18,6 @@ export const initialUserRegister = {
   rol: null,
 };
 
-// ============================================
-// 2. CONTEXTO Y PROVIDER
-// ============================================
-
 const GlobalContext = createContext<any>(null);
 
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
@@ -34,6 +27,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const [userRegister, setUserRegister] = useState(initialUserRegister);
 
   const [playlists, setPlaylists] = useState([]);
+  const [megusta, setMeGusta] = useState([]);
   const [playlistDetalles, setPlaylistDetalles] = useState({});
 
   return (
@@ -42,7 +36,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         userData, setUserData,
         userRegister, setUserRegister,
         playlists, setPlaylists,
-        playlistDetalles, setPlaylistDetalles
+        playlistDetalles, setPlaylistDetalles,
+        megusta, setMeGusta
       }}
     >
       {children}

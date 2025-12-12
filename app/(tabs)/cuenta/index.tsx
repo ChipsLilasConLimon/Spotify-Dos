@@ -27,19 +27,17 @@ export default function PerfilUsuarioScreen() {
 };
 
   const obtenerDatos = async () => {
-    if (!userData.id) {
-       const dataUsuario = await getObtenerDatosDeUsuario();
-       setUserData(dataUsuario);
-    }
-     if (!userRegister.id) {
-       const dataUsuario = await getObtenerDatosDeUsuarioRegistro();
-       setUserRegister(dataUsuario);
-    }
-    if (playlists.length === 0) {
-    const dataPlaylist = await getObtenerTodasPlaylistUsuario();
-    setPlaylists(dataPlaylist); // ← GUARDADO GLOBAL
-  };
-  };
+  if (!userData.id) {
+     const dataUsuario = await getObtenerDatosDeUsuario();
+     setUserData(dataUsuario);
+  }
+  if (!userRegister.id) {
+     const dataUsuario = await getObtenerDatosDeUsuarioRegistro();
+     setUserRegister(dataUsuario);
+  }
+  const dataPlaylist = await getObtenerTodasPlaylistUsuario();
+  setPlaylists(dataPlaylist); 
+};
 
   const handleIrConfiguracion = () => {
      router.push(`/(tabs)/cuenta/configuracion`);

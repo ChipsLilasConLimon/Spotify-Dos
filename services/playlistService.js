@@ -35,3 +35,7 @@ export const getVerificarCancionPlaylist = async (idCancion, idPlaylist) => {
       const response = await api.get(`playlist/verificar-cancion-existente?idCancion=${idCancion}&idPlaylist=${idPlaylist}`);
       return response.data;
 };
+export const deleteEliminarPlaylist = async (idPlaylist) => {
+      const response = await api.delete(`playlist/eliminar?id=${idPlaylist}`);
+      return response.data;
+};

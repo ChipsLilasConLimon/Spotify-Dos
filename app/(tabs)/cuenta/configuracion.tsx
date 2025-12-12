@@ -126,6 +126,7 @@ export default function ConfiguracionScreen() {
         {cambiarnombre ? (
           <TextInput
           placeholder="Nombre"
+          maxLength={30   }
           placeholderTextColor="#777"
           value={userRegister.nombre_Usuario || ""}
           onChangeText={(text) =>setUserRegister({ ...userRegister, nombre_Usuario: text })}
@@ -148,6 +149,7 @@ export default function ConfiguracionScreen() {
         {cambiarapellido ? (
           <TextInput
           placeholder="Apellido"
+          maxLength={50}
           placeholderTextColor="#777"
           value={userRegister.apellido_Usuario || ""}
           onChangeText={(text) =>setUserRegister({ ...userRegister, apellido_Usuario: text })}
@@ -177,6 +179,7 @@ export default function ConfiguracionScreen() {
         <TextInput
           multiline
           numberOfLines={4}
+          maxLength={200}
           placeholder="Descripción aquí..."
           placeholderTextColor="#777"
           value={userData.descripcion || ""}

@@ -2,6 +2,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Pressable, Text, View } from 'react-native';
+import crearLogo from "../../../assets/images/crear-simbolo-redondo.png";
+import ModalPlaylistCommponent from "../../../components/modalAgregarCancion";
 import { getCancionesPopularesDeArtista, getInformacionDeArtista } from '../../../services/mainService';
 import { artistaStyles } from "../../../styles/artista-styles";
 import { globalStyles } from "../../../styles/global-styles";
@@ -23,6 +25,8 @@ type ArtistaCanciones = {
       const [isLoading, setIsLoading] = useState(false);
       const [artista, setArtista] = useState<Artista>();
       const [cancionesartista, setCancionesArtista] = useState<ArtistaCanciones[]>([]);
+      const [modalVisibilidad, setModalVisibilidad] = useState(false);
+      const [cancionSeleccionada, setCancionSeleccionada] = useState<ArtistaCanciones | null>(null);
       
 
      useEffect(() => {
@@ -65,6 +69,10 @@ type ArtistaCanciones = {
          const formattedSeconds = String(seconds).padStart(2, '0');
          return `${formattedMinutes}:${formattedSeconds}`;
        }
+       const handleAgregarCancionPlaylist = (item: ArtistaCanciones) => {
+        setCancionSeleccionada(item);
+        setModalVisibilidad(true);
+      };
        if (isLoading) {
            return (
              <View style={globalStyles.centerMain}>
@@ -74,42 +82,62 @@ type ArtistaCanciones = {
            );
          }
    return (
+  <View style={{ flex: 1, backgroundColor: "#000" }}>
     <FlatList
-    data={cancionesartista}
-    contentContainerStyle={{ paddingBottom: 20 }}
-    style={globalStyles.backgroundPlaylist}
-    ListHeaderComponent={
-    <>
-    <View style={artistaStyles.bannerContainerPlaylist}>
-    <Image source={{ uri: artista?.picture_xl }} style={artistaStyles.bannerImageMainPlaylist}
-    resizeMode="cover"
-    />
-    <LinearGradient
-        colors={['transparent', 'black']}
-        style={artistaStyles.fadeBottom}
-      />
-  <View style={artistaStyles.bannerTextContainer}>
-    <Text style={artistaStyles.bannerTextPlaylist}>{artista?.name}</Text>
-  </View>
-</View>
- <View style={artistaStyles.separadorArtista} />
- <Text style={artistaStyles.txtSubtitleArtista}> Canciones Populares</Text>
-    </>
-  }
-  renderItem={({ item }) => (
-    <>
-      <Pressable onPress={() => handleReproducirMusica(item.id)} style={artistaStyles.cancionCard}>
-        <Image source={{ uri: item.album_poster }} style={artistaStyles.albumImage}/>
-        <View style={artistaStyles.cancionInfo}>
+      data={cancionesartista}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      style={globalStyles.backgroundPlaylist}
+      ListHeaderComponent={
+        <>
+          <View style={artistaStyles.bannerContainerPlaylist}>
+            <Image
+              source={{ uri: artista?.picture_xl }}
+              style={artistaStyles.bannerImageMainPlaylist}
+              resizeMode="cover"
+            />
+            <LinearGradient
+              colors={['transparent', 'black']}
+              style={artistaStyles.fadeBottom}
+            />
+            <View style={artistaStyles.bannerTextContainer}>
+              <Text style={artistaStyles.bannerTextPlaylist}>{artista?.name}</Text>
+            </View>
+          </View>
+
+          <View style={artistaStyles.separadorArtista} />
+          <Text style={artistaStyles.txtSubtitleArtista}>Canciones Populares</Text>
+        </>
+      }
+      renderItem={({ item }) => (
+        <>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginVertical: 5 }}>
+          <Pressable onPress={() => handleReproducirMusica(item.id)} style={artistaStyles.cancionCard}>
+          <Image source={{ uri: item.album_poster }} style={artistaStyles.albumImage} />
+          <View style={artistaStyles.cancionInfo}>
           <Text style={artistaStyles.cancionTitulo}>{item.title}</Text>
-          <Text style={artistaStyles.cancionDuracion}>
-            Duración: {handleFormatearSegundos(item.duration)}
+          <Text style={artistaStyles.cancionDuracion}>Duración: {handleFormatearSegundos(item.duration)}
           </Text>
-        </View>
-      </Pressable>
-      <View style={artistaStyles.divider} />
-    </>
-  )}
-/>
-  );
+          </View>
+          <Pressable onPress={() => handleAgregarCancionPlaylist(item)} style={artistaStyles.addButton}>
+          <Image source={crearLogo} style={artistaStyles.addIcon} />
+          </Pressable>
+          </Pressable>
+          </View>
+        </>
+      )}
+    />
+
+    {cancionSeleccionada && (
+      <ModalPlaylistCommponent
+        visible={modalVisibilidad}
+        onClose={() => setModalVisibilidad(false)}
+        idCancion={cancionSeleccionada.id}
+        nombreCancion={cancionSeleccionada.title}
+        imagenCancion={cancionSeleccionada.album_poster}
+        artistaCancion={artista?.name ?? ""}
+      />
+    )}
+  </View>
+);
+
 }

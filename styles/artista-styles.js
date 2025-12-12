@@ -92,5 +92,15 @@ fadeBottom: {
     bottom: 0,
     width: '100%',
     height: 60,
-  }
+  },
+  addButton: {
+  padding: 10,
+  justifyContent: "center",
+  alignItems: "center",
+},
+addIcon: {
+  width: 24,
+  height: 24,
+  tintColor: "#fff",
+},
 });

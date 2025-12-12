@@ -156,12 +156,13 @@ centerMain: {
   },
 
   headerMain: {
-    fontSize: 26,
+    fontSize: 30,
     fontWeight: 'bold',
     color: '#ffffffff',
     marginBottom: 6,
     textAlign: 'left',
     borderRadius: 5,
+    marginLeft: 5,
   },
   headerFlatListMain: {
     fontSize: 26,
@@ -226,17 +227,19 @@ centerMain: {
   },
 headerBackgroundMain: {
   width: "100%",
-  height: 55, 
+  height: 70, 
   justifyContent: "center",
-  marginBottom: 20,
+  marginBottom: 25,
 },
 
 headerRowContentMain: {
   flexDirection: "row",
-  justifyContent: "space-between",
+ justifyContent: "space-between",
+ justifyContent: "flex-start",  
   alignItems: "center",
   width: "100%",
-  paddingHorizontal: 0,
+ paddingHorizontal: 0,
+ paddingHorizontal: 5, 
 },
 
 // PLAYLIST
@@ -307,4 +310,46 @@ headerRowContentMain: {
   backgroundPlaylist: {
     backgroundColor: '#000',
   },
+  menuHeaderContainer: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginTop: 10,
+  marginBottom: 12,
+  paddingHorizontal: 10,
+},
+
+menuHeaderTextContainer: {
+  flex: 1, // Ocupa todo el espacio disponible para que el menú quede a la derecha
+},
+
+menuHeaderTextTitle: {
+  fontSize: 24,
+  fontWeight: 'bold',
+  color: '#fff',
+},
+
+menuHeaderTextDescription: {
+  fontSize: 14,
+  color: '#aaa',
+  marginTop: 2,
+},
+fadeBottom: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    height: 30,
+  },
+  perfilImagen: {
+  width: 52,
+  height: 52,
+  borderRadius: 100,
+  borderWidth: 1.5,           
+  borderColor: "#ffffff",
+  marginRight: 3,           
+  backgroundColor: "#f1f1f1",
+  shadowOpacity: 0.4,
+},
+
+
 });

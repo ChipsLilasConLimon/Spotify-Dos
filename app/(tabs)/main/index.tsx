@@ -1,9 +1,12 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Image, ImageBackground, Pressable, ScrollView, Text, View } from 'react-native';
-import bannerAzul from "../../../assets/images/fondo-banner-main.jpg";
-import logoApp from "../../../assets/images/logos/logo-1.png";
+import bannerAzul from "../../../assets/images/banner-123.jpg";
+import logoSinUsuario from "../../../assets/images/usuario-sin-foto.png";
+import { useGlobalStore } from "../../../contexts/global-context";
 import { getAlbumesPopulares, getArtistasPopulares, getCancionesPopulares } from '../../../services/mainService';
+import { getObtenerDatosDeUsuario } from "../../../services/usuariosdatosService";
 import { globalStyles } from "../../../styles/global-styles";
 type Album = {
   id: number,
@@ -32,6 +35,7 @@ export default function MainScreen() {
   const [artistas, setArtistas] = useState<Artista[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { userData, setUserData} = useGlobalStore();
 
   useEffect(() => {
     fetchDatosPrincipales();
@@ -65,6 +69,8 @@ export default function MainScreen() {
     setAlbums(nuevoArrayAlbum);
     setMusica(nuevoArrayMusica);
     setArtistas(nuevoArrayArtistas);
+    const dataUsuario = await getObtenerDatosDeUsuario();
+    setUserData(dataUsuario);
     } catch (err: any) {
       Alert.alert("Error", "No se pudieron los datos");
       setError("Error al cargar grupos.");
@@ -103,13 +109,15 @@ export default function MainScreen() {
     <ImageBackground source={bannerAzul} style={globalStyles.headerBackgroundMain} imageStyle={{ resizeMode: "cover" }}>
 
   <View style={globalStyles.headerRowContentMain}>
+    {userData?.url_Perfil === null || userData?.url_Perfil === "" ? (
+              <Image source={logoSinUsuario} style={globalStyles.perfilImagen} />
+            ) : (
+              <Image source={{ uri: userData?.url_Perfil }} style={globalStyles.perfilImagen} />
+            )}
     <Text style={globalStyles.headerMain}>{obtenerLabelHora()}</Text>
-    <Image
-      source={logoApp}
-      style={globalStyles.imageLogoAppMain}
-      resizeMode="contain"
-    />
   </View>
+  <LinearGradient colors={['transparent', 'black']}
+  style={globalStyles.fadeBottom}/>
 </ImageBackground>
     {error && <Text style={globalStyles.errorTextMain}>{error}</Text>}
     {albums.length > 0 ? (
